@@ -1,8 +1,13 @@
 from constants import Precedence, Rank, Suit
-from entity import Card, Deck, Hand
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.card import Card
+    from models.deck import Deck
+    from models.hand import Hand
 
 
-def deal(deck: Deck, players: list[Hand]):
+def deal(deck: "Deck", players: list["Hand"]):
     cards_each = len(Rank)
 
     player_idx = 0
@@ -12,8 +17,7 @@ def deal(deck: Deck, players: list[Hand]):
         player_idx = (player_idx + 1) % len(players)
 
 
-def compare_card(src: Card, target: Card, leading_suit: Card, /):
-    """comapres source and return boolean if src has higher precedence"""
+def compare_card(src: "Card", target: "Card", leading_suit: "Card", /):
     suit_precedence = comapre_suit(src.suit, target.suit, leading_suit.suit)
     if suit_precedence == Precedence.EQUAL:
         return compare_value(src.rank, target.rank)
@@ -22,7 +26,7 @@ def compare_card(src: Card, target: Card, leading_suit: Card, /):
     return False
 
 
-def comapre_suit(src: Suit, target: Suit, leading_suit: Suit) -> Precedence:
+def comapre_suit(src: "Suit", target: "Suit", leading_suit: "Suit") -> Precedence:
     if src.value == target.value:
         return Precedence.EQUAL
     if src.value == "spade":
