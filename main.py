@@ -4,7 +4,7 @@ from models.card import Card
 from models.deck import Deck
 from models.hand import AIHands
 from models.table import Table
-from utils import deal, choose_subround_winner
+from utils import deal, choose_subround_winner, format_indexed_hand
 import os, time
 
 
@@ -32,6 +32,7 @@ class Game:
         for turn, player in enumerate(self.table.players):
             print(f"Player {turn}'s turn:")
             if isinstance(player, AIHands):
+                print(format_indexed_hand(player.choose_revealable_cards(leading_card)))
                 card = player.choose_reveal_card(leading_card, played_cards)
             else:
                 print("Your hand:")

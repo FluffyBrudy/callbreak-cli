@@ -71,6 +71,22 @@ def format_hand(cards: Iterable["Card"], cols=4, width=16):
     return "\n".join(lines)
 
 
+def format_indexed_hand(
+    indexed_cards: list[tuple[int, "Card"]], cols=4, width=16
+) -> str:
+    lines = []
+    row = []
+    for i, card in indexed_cards:
+        cell = f"{i:>3} {card}"
+        row.append(cell.ljust(width))
+        if len(row) == cols:
+            lines.append("".join(row))
+            row = []
+    if row:
+        lines.append("".join(row))
+    return "\n".join(lines)
+
+
 if __name__ == "__main__":
     card1 = Card(Suit.DIAMOND, Rank.TWO)
     card2 = Card(Suit.HEART, Rank.ACE)
