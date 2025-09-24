@@ -30,7 +30,7 @@ class Game:
         played_cards = []
 
         for turn, player in enumerate(self.table.players):
-            print(f"Player {turn}'s turn:")
+            print(f"{player.label}'s turn:")
             if isinstance(player, AIHands):
                 print(format_indexed_hand(player.choose_revealable_cards(leading_card)))
                 card = player.choose_reveal_card(leading_card, played_cards)
@@ -56,7 +56,7 @@ class Game:
                     except ValueError:
                         print("please enter a valid integer.")
 
-            print(f"Player {turn} played: {card}\n")
+            print(f"{player.label} played: {card}\n")
             self.subround_hands[player.label] = card
             played_cards.append(card)
             if turn == 0:
