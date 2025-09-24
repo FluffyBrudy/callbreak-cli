@@ -13,7 +13,7 @@ class Game:
         self.table = Table(num_players=4, debug=True)
         self.deck = Deck()
         self.deck.shuffle()
-        deal(self.deck, self.table.players)
+        deal(self.deck, self.table.players)  # type: ignore
 
         self.subrounds = 0
         self.max_subround = len(Rank)
@@ -70,7 +70,7 @@ class Game:
 
         self.subrounds += 1
 
-        winner = choose_subround_winner(self.subround_hands, leading_card)
+        winner = choose_subround_winner(self.subround_hands, leading_card)  # type: ignore
         print(f"Winner of this subround: {winner}\n")
 
         self.score[winner] += 1

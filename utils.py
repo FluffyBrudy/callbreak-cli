@@ -1,13 +1,13 @@
 from constants import Precedence, Rank, Suit
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Union
 
 if TYPE_CHECKING:
     from models.card import Card
     from models.deck import Deck
-    from models.hand import Hand
+    from models.hand import Hand, AIHands
 
 
-def deal(deck: "Deck", players: list["Hand"]):
+def deal(deck: "Deck", players: list[Union["Hand", "AIHands"]]):
     cards_each = len(Rank)
 
     player_idx = 0
