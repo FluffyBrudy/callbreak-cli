@@ -1,5 +1,5 @@
 from constants import Precedence, Rank, Suit
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
 
 if TYPE_CHECKING:
     from models.card import Card
@@ -42,6 +42,20 @@ def comapre_suit(src: "Suit", target: "Suit", leading_suit: "Suit") -> Precedenc
 
 def compare_value(src: Rank, dest: Rank):
     return src.value == Rank.ACE.value or src.value > dest.value
+
+
+def format_hand(cards: Iterable["Card"], cols=4, width=16):
+    lines = []
+    row = []
+    for i, card in enumerate(cards, start=1):
+        cell = f"{i:>3} {card}"
+        row.append(cell.ljust(width))
+        if i % cols == 0:
+            lines.append("".join(row))
+            row = []
+    if row:
+        lines.append("".join(row))
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":

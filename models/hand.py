@@ -1,7 +1,7 @@
 from typing import Iterable, Optional
 
-from constants import Rank
-from utils import compare_card
+from constants import Rank, Suit
+from utils import compare_card, format_hand
 from .card import Card
 
 
@@ -21,17 +21,42 @@ class Hand:
     def reveal(self, choice: int) -> Card:
         return self.cards.pop(choice)
 
+    def choose_revealable_cards(self, leading_card: Optional[Card]):
+        if leading_card is None:
+            return [(i, card) for i, card in enumerate(self.cards)]
+        same_suits = [
+            (i, card)
+            for i, card in enumerate(self.cards)
+            if card.suit == leading_card.suit
+        ]
+        if len(same_suits) > 0:
+            return same_suits
+        spade_suite = [
+            (i, card) for i, card in enumerate(self.cards) if card.suit == Suit.SPADE
+        ]
+        if len(spade_suite) > 0:
+            return spade_suite
+        return [(i, card) for i, card in enumerate(self.cards)]
+
+    def __repr__(self) -> str:
+        return format_hand(self.cards)
+
     def __str__(self) -> str:
-        return ", ".join(
-            [f"({i}) {card.__str__()}" for i, card in enumerate(self.cards)]
-        )
+        return format_hand(self.cards)
 
 
 class AIHands(Hand):
     def __init__(self, label: Optional[str] = None) -> None:
         super().__init__(is_human=False, label=label)
 
-    def choose_reveal_card(self, leading_card: Card, other_cards: Iterable[Card]):
+    def choose_reveal_card(
+        self, leading_card: Card | None, other_cards: Iterable[Card]
+    ):
+        if leading_card is None:
+            min_choice = sorted(self.cards, key=lambda card: card.rank.value)
+            card = self._omit_ace_if_possible(min_choice)
+            return card
+
         same_suits = [card for card in self.cards if card.suit == leading_card.suit]
         other_suits = [card for card in self.cards if card.suit != leading_card.suit]
 
