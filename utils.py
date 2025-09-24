@@ -44,6 +44,19 @@ def compare_value(src: Rank, dest: Rank):
     return src.value == Rank.ACE.value or src.value > dest.value
 
 
+def choose_subround_winner(
+    player_hands: dict[str, "Card"], leading_card: "Card"
+) -> str:
+    player_card_map = list(player_hands.items())
+    winner, winning_card = player_card_map[0]
+
+    for player, card in player_card_map[1:]:
+        if compare_card(card, winning_card, leading_card):
+            winner, winning_card = player, card
+
+    return winner
+
+
 def format_hand(cards: Iterable["Card"], cols=4, width=16):
     lines = []
     row = []

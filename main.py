@@ -4,13 +4,13 @@ from models.card import Card
 from models.deck import Deck
 from models.hand import AIHands
 from models.table import Table
-from utils import deal
+from utils import deal, choose_subround_winner
 import os, time
 
 
 class Game:
     def __init__(self) -> None:
-        self.table = Table(num_players=4)
+        self.table = Table(num_players=4, debug=True)
         self.deck = Deck()
         self.deck.shuffle()
         deal(self.deck, self.table.players)
@@ -22,6 +22,8 @@ class Game:
             p.label: None for p in self.table.players
         }
 
+        self.score: dict[str, int] = {p.label: 0 for p in self.table.players}
+
     def run_subround(self):
         self.subround_hands = {p.label: None for p in self.table.players}
         leading_card: Optional[Card] = None
@@ -30,7 +32,6 @@ class Game:
         for turn, player in enumerate(self.table.players):
             print(f"Player {turn}'s turn:")
             if isinstance(player, AIHands):
-                print(player)
                 card = player.choose_reveal_card(leading_card, played_cards)
             else:
                 print("Your hand:")
@@ -59,19 +60,32 @@ class Game:
             played_cards.append(card)
             if turn == 0:
                 leading_card = card
+
         if input("press to continue") or True:
             if os.system("clear") != 0:
                 os.system("cls")
             print("loading...")
             time.sleep(1)
+
         self.subrounds += 1
-        return self.subround_hands
+
+        winner = choose_subround_winner(self.subround_hands, leading_card)
+        print(f"Winner of this subround: {winner}\n")
+
+        self.score[winner] += 1
+
+        return self.subround_hands, winner
 
 
 if __name__ == "__main__":
     game = Game()
     for _ in range(game.max_subround):
-        results = game.run_subround()
+        results, winner = game.run_subround()
         print("Subround results:")
         for player_label, card in results.items():
             print(f"{player_label}: {card}")
+        print(f"Subround winner: {winner}\n")
+
+    print("Final scores:")
+    for player_label, score in game.score.items():
+        print(f"{player_label}: {score}")
